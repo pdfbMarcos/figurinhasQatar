@@ -1,5 +1,5 @@
 {
-  "name": "teste",
+  "name": "pdfb_processo",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -7,8 +7,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
-   },
+    "eject": "expo eject",
+    "build": "expo build:web"
+  },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@react-native-community/netinfo": "8.2.0",
@@ -27,7 +28,8 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "expo-cli": "^5.4.9"
   },
   "private": true
 }
