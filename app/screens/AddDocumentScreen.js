@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet } from "react-native";
 import * as Yup from "yup";
 
 import documentApi from "../api/document";
+import ProjectContext from "../project/context";
+import routes from "../navigation/routes";
 import Screen from "../components/Screen";
 import { Form, FormField, SubmitButton } from "../components/forms";
 import { ListItemSeparator } from "../components/lists";
@@ -18,7 +20,10 @@ const validationSchema = Yup.object().shape({
     .label("Data da preparação"),
 });
 
-function AddDocumentScreen(props) {
+function AddDocumentScreen({ navigation, route }) {
+  const sourceDocument = route ? route.params : [];
+  const { project } = useContext(ProjectContext);
+
   const handleSubmit = async (document, { resetForm }) => {
     const result = await documentApi.addDocument(document);
 
@@ -28,20 +33,20 @@ function AddDocumentScreen(props) {
     alert("Success!");
 
     resetForm();
+    navigation.navigate(routes.MENUSCREEN);
   };
 
-  const projeto = "inovatgq";
   const today = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
 
   return (
     <Screen style={styles.container}>
       <Form
         initialValues={{
-          caixa: "",
-          material: "",
-          lote: "",
+          caixa: sourceDocument ? sourceDocument.caixa : "",
+          material: sourceDocument ? sourceDocument.material : "",
+          lote: sourceDocument ? sourceDocument.lote : "",
           dtPreparacao: today,
-          projeto: projeto,
+          projeto: project,
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}

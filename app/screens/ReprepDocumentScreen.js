@@ -4,6 +4,7 @@ import * as Yup from "yup";
 
 import colors from "../config/colors";
 import documentApi from "../api/document";
+import routes from "../navigation/routes";
 import Screen from "../components/Screen";
 import Text from "../components/Text";
 import { Form, FormField, SubmitButton } from "../components/forms";
@@ -15,11 +16,11 @@ const validationSchema = Yup.object().shape({
     .max(10)
     .min(10)
     .label("Data da repreparação"),
-  caixaPDF: Yup.string().required().label("Caixa PDF"),
+  caixaPDF: Yup.string().label("Caixa PDF"),
   qtdImg: Yup.string().required().label("Qtd Fotos"),
 });
 
-function ReprepDocumentScreen({ route }) {
+function ReprepDocumentScreen({ route, navigation }) {
   const document = route.params;
   const params =
     "/" +
@@ -30,18 +31,20 @@ function ReprepDocumentScreen({ route }) {
     document.material +
     "/" +
     document.lote +
-    "/" +
-    document.lotePDF;
+    "/rep";
 
   const handleSubmit = async (document, { resetForm }) => {
     const result = await documentApi.updDocument(document, params);
 
     if (!result.ok) {
-      return alert("Could not save the document!" + result.originalError);
+      return alert(
+        "Não foi possivel atualizar o documento!" + result.originalError
+      );
     }
     alert("Success!");
 
     resetForm();
+    navigation.navigate(routes.REPREPDOCUMENTSLIST);
   };
 
   const today = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
@@ -57,6 +60,14 @@ function ReprepDocumentScreen({ route }) {
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
+        <View style={styles.container}>
+          <Text>Caixa: {document.caixa}</Text>
+          <Text>Material: {document.material}</Text>
+          <Text>Lote: {document.lote}</Text>
+          <Text>Projeto: {document.projeto}</Text>
+        </View>
+        <ListItemSeparator />
+        <ListItemSeparator />
         <FormField
           autoCorrect={false}
           defaultValue={today}
@@ -82,12 +93,6 @@ function ReprepDocumentScreen({ route }) {
           width={180}
         />
         <ListItemSeparator />
-        <View style={styles.viewInfo}>
-          <Text>Caixa: {document.caixa}</Text>
-          <Text>Material: {document.material}</Text>
-          <Text>Lote: {document.lote}</Text>
-          <Text>Projeto: {document.projeto}</Text>
-        </View>
         <ListItemSeparator />
         <SubmitButton title="Atualizar documento" />
       </Form>
@@ -97,11 +102,6 @@ function ReprepDocumentScreen({ route }) {
 
 const styles = StyleSheet.create({
   container: { padding: 10 },
-  viewInfo: {
-    backgroundColor: colors.white,
-    padding: 15,
-    borderRadius: 35,
-  },
 });
 
 export default ReprepDocumentScreen;

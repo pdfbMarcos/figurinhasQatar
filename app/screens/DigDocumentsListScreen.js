@@ -9,19 +9,19 @@ import useApi from "../hooks/useApi";
 import { ListItem, ListItemSeparator } from "../components/lists";
 import { Form, FormField, SubmitButton } from "../components/forms";
 
-function ReprepDocumentsListScreen({ navigation }) {
+function DigDocumentsListScreen({ navigation }) {
   const { project } = useContext(ProjectContext);
 
   const getDocumentsApi = useApi(documentApi.getDocuments);
 
   useEffect(() => {
-    getDocumentsApi.request("/" + project + "/rep");
+    getDocumentsApi.request("/" + project + "/dig");
   }, []);
 
   const dataDocuments = getDocumentsApi.data;
 
   const handleRefresh = async ({ caixa }) => {
-    getDocumentsApi.request("/" + project + "/" + caixa + "/rep");
+    getDocumentsApi.request("/" + project + "/" + caixa + "/dig");
   };
 
   return (
@@ -61,7 +61,7 @@ function ReprepDocumentsListScreen({ navigation }) {
                 subTitle={
                   "Material: " + item.material + " - Lote: " + item.lote
                 }
-                onPress={() => navigation.navigate(routes.REPREPDOCUMENT, item)}
+                onPress={() => navigation.navigate(routes.DIGDOCUMENTS, item)}
               />
             )}
           />
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
   container: { flexDirection: "row", marginLeft: 15 },
 });
 
-export default ReprepDocumentsListScreen;
+export default DigDocumentsListScreen;

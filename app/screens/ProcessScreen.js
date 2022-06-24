@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View, FlatList } from "react-native";
 
-import { ListItem, ListItemSeparator } from "../components/lists";
+import {
+  ListItem,
+  ListItemBasic,
+  ListItemSeparator,
+} from "../components/lists";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
+import ProjectContext from "../project/context";
 import routes from "../navigation/routes";
 import Screen from "../components/Screen";
 
 const menuItems = [
+  {
+    title: "Lista Planilha",
+    icon: {
+      name: "format-list-bulleted",
+      backgroundColor: "orange",
+    },
+    targetScreen: routes.SOURCEDOCUMENTSLIST,
+  },
   {
     title: "Preparacão",
     icon: {
@@ -22,20 +35,35 @@ const menuItems = [
       name: "file-table-box",
       backgroundColor: colors.primary,
     },
-    targetScreen: routes.DOCUMENTSLIST,
+    targetScreen: routes.DIGDOCUMENTSLIST,
+  },
+  {
+    title: "re-Preparacão",
+    icon: {
+      name: "archive-arrow-down-outline",
+      backgroundColor: "#ffe00d",
+    },
+    targetScreen: routes.REPREPDOCUMENTSLIST,
   },
 ];
 
 function MainScreen({ navigation }) {
+  const { project } = useContext(ProjectContext);
+
   return (
     <Screen style={styles.screen}>
       <View style={styles.container}>
-        <ListItem
+        <ListItemBasic
           title="PDF Brasil"
-          subTitle="Digitalização - Controle"
+          subTitle={"Digitalização - " + project}
           image={require("../assets/pdfBrasil.png")}
         />
       </View>
+      <ListItem
+        title="Consulta"
+        IconComponent={<Icon name="binoculars" backgroundColor="green" />}
+        onPress={() => navigation.navigate(routes.DOCUMENTSLIST)}
+      />
       <View style={styles.container}>
         <FlatList
           data={menuItems}
@@ -55,13 +83,6 @@ function MainScreen({ navigation }) {
           )}
         />
       </View>
-      <ListItem
-        title="re-Preparacão"
-        IconComponent={
-          <Icon name="archive-arrow-down-outline" backgroundColor="#ffe00d" />
-        }
-        onPress={() => navigation.navigate(routes.REPREPDOCUMENTSLIST)}
-      />
     </Screen>
   );
 }

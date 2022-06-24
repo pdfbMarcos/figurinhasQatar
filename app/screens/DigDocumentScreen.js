@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import * as Yup from "yup";
 
-import colors from "../config/colors";
 import documentApi from "../api/document";
+import RadioButton from "../components/RadioButton";
+import routes from "../navigation/routes";
 import Screen from "../components/Screen";
 import Text from "../components/Text";
 import { Form, FormField, SubmitButton } from "../components/forms";
@@ -17,33 +18,43 @@ const validationSchema = Yup.object().shape({
     .label("Data da digitalização"),
   lotePDF: Yup.string().required().label("LotePDF"),
   qtdPag: Yup.string().required().label("Páginas"),
-  doctoFP: Yup.string().required().label("Fazer fotos"),
 });
 
-function DigDocumentScreen({ route }) {
-  const document = route.params;
+function DigDocumentScreen({ route, navigation }) {
+  const targetDocument = route.params;
   const params =
     "/" +
-    document.projeto +
+    targetDocument.projeto +
     "/" +
-    document.caixa +
+    targetDocument.caixa +
     "/" +
-    document.material +
+    targetDocument.material +
     "/" +
-    document.lote;
+    targetDocument.lote +
+    "/dig";
+  const today = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
+  const data = [{ value: "Sim" }, { value: "Não" }];
 
-  const handleSubmit = async (document, { resetForm }) => {
-    const result = await documentApi.updDocument(document, params);
+  const [option, setOption] = useState(null);
+
+  const handleSubmit = async (newDocumentInfo, { resetForm }) => {
+    if (option === null) {
+      return alert("Informar se este documento precisa de fotos!");
+    }
+
+    newDocumentInfo.doctoFP = option;
+    const result = await documentApi.updDocument(newDocumentInfo, params);
 
     if (!result.ok) {
-      return alert("Could not save the document!" + result.originalError);
+      return alert(
+        "Não foi possivel atualizar o documento!" + result.originalError
+      );
     }
     alert("Success!");
 
     resetForm();
+    navigation.navigate(routes.DIGDOCUMENTSLIST);
   };
-
-  const today = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
 
   return (
     <Screen style={styles.container}>
@@ -57,6 +68,14 @@ function DigDocumentScreen({ route }) {
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
+        <View style={styles.container}>
+          <Text>Caixa: {targetDocument.caixa}</Text>
+          <Text>Material: {targetDocument.material}</Text>
+          <Text>Lote: {targetDocument.lote}</Text>
+          <Text>Projeto: {targetDocument.projeto}</Text>
+        </View>
+        <ListItemSeparator />
+        <ListItemSeparator />
         <FormField
           autoCorrect={false}
           defaultValue={today}
@@ -81,20 +100,15 @@ function DigDocumentScreen({ route }) {
           placeholder="Páginas"
           width={180}
         />
-        <FormField
-          autoCorrect={false}
-          icon="image-outline"
-          name="doctoFP"
-          placeholder="Fazer foto?"
-          width={180}
-        />
-        <ListItemSeparator />
-        <View style={styles.viewInfo}>
-          <Text>Caixa: {document.caixa}</Text>
-          <Text>Material: {document.material}</Text>
-          <Text>Lote: {document.lote}</Text>
-          <Text>Projeto: {document.projeto}</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.paragraph}>Fazer fotos?</Text>
+          <RadioButton
+            data={data}
+            keyExtractor={(data) => data.value}
+            onSelect={(value) => setOption(value)}
+          />
         </View>
+        <ListItemSeparator />
         <ListItemSeparator />
         <SubmitButton title="Atualizar documento" />
       </Form>
@@ -104,10 +118,11 @@ function DigDocumentScreen({ route }) {
 
 const styles = StyleSheet.create({
   container: { padding: 10 },
-  viewInfo: {
-    backgroundColor: colors.white,
-    padding: 15,
-    borderRadius: 35,
+  paragraph: {
+    margin: 15,
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
