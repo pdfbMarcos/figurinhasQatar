@@ -45,8 +45,6 @@ function CheckBoxListScreen({ navigation }) {
       );
     }
     alert("Sucesso!");
-
-    // tirar documento da lista
   };
 
   const handleRefresh = async ({ caixa }) => {

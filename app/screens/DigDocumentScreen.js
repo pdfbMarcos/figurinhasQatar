@@ -50,6 +50,7 @@ function DigDocumentScreen({ route, navigation }) {
         "Não foi possivel atualizar o documento!" + result.originalError
       );
     }
+
     alert("Success!");
 
     resetForm();
