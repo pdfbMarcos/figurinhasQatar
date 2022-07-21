@@ -15,13 +15,27 @@ function DigDocumentsListScreen({ navigation }) {
   const getDocumentsApi = useApi(documentApi.getDocuments);
 
   useEffect(() => {
-    getDocumentsApi.request("/" + project + "/dig");
+    getDocumentsApi.request("/" + project + "/x/x/x/dig/p");
   }, []);
 
   const dataDocuments = getDocumentsApi.data;
 
-  const handleRefresh = async ({ caixa }) => {
-    getDocumentsApi.request("/" + project + "/" + caixa + "/dig");
+  const handleRefresh = async ({ caixa, material, lote }) => {
+    let parametros = "";
+    parametros = caixa ? "/" + caixa : "";
+    parametros = parametros + (material ? "/" + material : "");
+    parametros = parametros + (lote ? "/" + lote : "");
+    parametros = parametros + (caixa ? "" : "/x");
+    parametros = parametros + (material ? "" : "/x");
+    parametros = parametros + (lote ? "" : "/x");
+
+    let tipo = "";
+    tipo = caixa ? "c" : "";
+    tipo = tipo + (material ? "m" : "");
+    tipo = tipo + (lote ? "l" : "");
+    tipo = tipo === "" ? "p" : tipo;
+
+    getDocumentsApi.request("/" + project + parametros + "/dig" + "/" + tipo);
   };
 
   return (
@@ -29,6 +43,8 @@ function DigDocumentsListScreen({ navigation }) {
       <Form
         initialValues={{
           caixa: "",
+          material: "",
+          lote: "",
         }}
         onSubmit={handleRefresh}
       >
@@ -41,7 +57,25 @@ function DigDocumentsListScreen({ navigation }) {
             placeholder="caixa"
             width={180}
           />
-          <SubmitButton marginLeft={5} title="Filtrar" width={175} />
+          <FormField
+            autoCapitalize="characters"
+            autoCorrect={false}
+            icon="beaker-outline"
+            name="material"
+            placeholder="material"
+            width={180}
+          />
+        </View>
+        <View style={styles.container}>
+          <FormField
+            autoCapitalize="characters"
+            autoCorrect={false}
+            icon="sitemap"
+            name="lote"
+            placeholder="lote"
+            width={180}
+          />
+          <SubmitButton title="Filtrar" width={180} />
         </View>
         <ListItemSeparator />
         <ListItemSeparator />
@@ -72,7 +106,12 @@ function DigDocumentsListScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flexDirection: "row", marginLeft: 15 },
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingStart: 10,
+    paddingEnd: 10,
+  },
 });
 
 export default DigDocumentsListScreen;
