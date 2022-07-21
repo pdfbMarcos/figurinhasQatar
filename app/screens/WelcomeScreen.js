@@ -44,6 +44,14 @@ function WelcomeScreen({ navigation }) {
             projectContext.setProject("inovatgq");
           }}
         />
+        <Button
+          title="INOVATCQ"
+          color="mediumLight"
+          onPress={() => {
+            navigation.navigate(routes.MENUSCREEN);
+            projectContext.setProject("inovat");
+          }}
+        />
       </View>
       <View style={styles.buttonsContainer}>
         <Button
