@@ -1,22 +1,34 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import colors from "../config/colors";
 
-function AppButton({ title, marginLeft, onPress, width, color = "primary" }) {
+function AppButton({
+  image,
+  title,
+  subTitle,
+  marginLeft,
+  onPress,
+  height,
+  width = 150,
+  color = "medium",
+}) {
   return (
     <TouchableOpacity
       style={[
         styles.button,
         {
           backgroundColor: colors[color],
+          height: height,
           marginLeft: marginLeft,
           width: width,
         },
       ]}
       onPress={onPress}
     >
-      <Text style={styles.text}>{title}</Text>
+      {image ? <Image style={styles.image} source={image} /> : null}
+      {title ? <Text style={styles.text}>{title}</Text> : null}
+      {subTitle ? <Text style={styles.subText}>{subTitle}</Text> : null}
     </TouchableOpacity>
   );
 }
@@ -27,13 +39,22 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
-    padding: 15,
     width: "100%",
-    marginVertical: 10,
+    marginVertical: 5,
+    marginEnd: 5,
+  },
+  image: {
+    marginBottom: 5,
+    marginTop: 5,
+  },
+  subText: {
+    color: colors.black,
+    fontSize: 10,
+    marginTop: 5,
   },
   text: {
     color: colors.white,
-    fontSize: 18,
+    fontSize: 12,
     textTransform: "uppercase",
     fontWeight: "bold",
   },
